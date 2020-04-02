@@ -109,20 +109,22 @@ class Server {
     };
   };
 
-  error(errorCode) {
-    return [errorCode]
+  error( errorCode ) {
+    return [ errorCode ];
   };
 
-  parse(url) {
+  parse( url ) {
     return url.split( /\// ).filter(Boolean);
   };
 
   // Needs testing
   async recording( method, destination ) {
     if ( destination.length > 2 || method != 'GET' ) {
+      console.log('first')
       return this.error(400);
 
     } else if ( destination.length = 1 ) {
+      console.log('second')
       return this.error(400);
 
     } else {
@@ -156,6 +158,7 @@ class Server {
           let recordingfile = queryResult['recordingfile'];
 
         } catch(err) {
+          console.log('угадал')
           log.debug(err);
           return this.error(404);
 
