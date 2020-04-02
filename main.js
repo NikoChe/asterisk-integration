@@ -151,6 +151,7 @@ class Server {
         var pathToMp3 = '';
 
         exec( `sox ${pathToGsm} ./rec/${callId}.mp3`, ( err, stdout ) => {
+          console.log(stdout)
           if ( !stdout ) {
             pathToMp3 = `recordings/${callId}.mp3`;
           };
