@@ -138,6 +138,7 @@ class Server {
                      WHERE uniqueid="${callId}" LIMIT 1;`;
 
         let queryResult = await db.execQuery(query);
+        log.object( queryResult );
         let recordingfile = queryResult['recordingfile'];
 
         if ( !recordingfile ) {
