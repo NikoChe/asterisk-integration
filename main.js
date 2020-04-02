@@ -116,7 +116,7 @@ class Server {
     return url.split( /\// ).filter(Boolean);
   };
 
-  // Needs testing
+  // Needs refactoring
   async getRecordingFile( method, destination ) {
     if ( destination.length != 2 || method != 'GET' ) {
       return Server.error(400);
@@ -126,9 +126,11 @@ class Server {
       let ls = `ls ./rec | grep ${callId}`;
       var filename = null;
 
-      exec( ls, ( err, stdout ) => {
-        filename = stdout;
-      });
+      // doesnt work now,
+      // TODO find file with fs
+      // exec( ls, ( err, stdout ) => {
+      //   filename = stdout;
+      // });
 
       if ( filename ) {
         return [200, { path: `recordings/${filename}` }];
