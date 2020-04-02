@@ -151,11 +151,14 @@ class Server {
         var pathToMp3 = '';
 
         exec( `sox ${pathToGsm} ./rec/${callId}.mp3`, ( err, stdout ) => {
-          console.log(stdout)
+          console.log('ну я тут')
           if ( !stdout ) {
+            console.log('и тут тоже')
             pathToMp3 = `recordings/${callId}.mp3`;
           };
         });
+
+        console.log(`pathToMp3`);
 
         if ( pathToMp3 ) {
           return [200, { path: pathToMp3 }];
