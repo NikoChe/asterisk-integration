@@ -135,7 +135,7 @@ class Server {
 
       } else {
         let query = `SELECT recordingfile FROM cdr \
-                     WHERE uniqueid="${callId}" LIMIT 1`;
+                     WHERE uniqueid="${callId}" LIMIT 1;`;
 
         let queryResult = await db.execQuery(query);
         let recordingfile = queryResult['recordingfile'];
