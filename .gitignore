@@ -3,7 +3,6 @@
 /node_modules
 
 # exclude logs and config file
-/config/*
-!/config
-/logs/*
-!/logs
+/config
+/logs
+/rec
