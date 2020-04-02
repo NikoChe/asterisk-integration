@@ -4,4 +4,6 @@
 
 # exclude logs and config file
 /config/*
+!/config
 /logs/*
+!/logs
