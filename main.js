@@ -138,8 +138,7 @@ class Server {
                      WHERE uniqueid="${callId}" LIMIT 1;`;
 
         let queryResult = await db.execQuery(query);
-        log.object( queryResult );
-        let recordingfile = queryResult['recordingfile'];
+        let recordingfile = queryResult[0]['recordingfile'];
 
         if ( !recordingfile ) {
           log.debug(`There's no recording in DB.`);
