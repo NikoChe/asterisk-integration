@@ -13,9 +13,9 @@ const fs = require('fs');
 const http = require('http');
 const odbc = require('odbc');
 const util = require('util');
-const { exec } = require("child_process");
-const Logger = require('./class/logger.js');
+const exec = util.promisify( require('child_process').exec );
 
+const Logger = require('./class/logger.js');
 const log = new Logger();
 
 
@@ -147,18 +147,9 @@ class Server {
 
         let recordsFolder = params.asterisk.recordsFolder;
         let pathToGsm = `${recordsFolder}/${recordingfile}.gsm`;
+        var pathToMp3 = `recordings/${callId}.mp3`;
 
-        var pathToMp3 = '';
-
-        exec( `sox ${pathToGsm} ./rec/${callId}.mp3`, ( err, stdout ) => {
-          console.log('ну я тут')
-          if ( !stdout ) {
-            console.log('и тут тоже')
-            pathToMp3 = `recordings/${callId}.mp3`;
-          };
-        });
-
-        console.log(`pathToMp3`);
+        await exec( `sox ${pathToGsm} ./rec/${callId}.mp3` );
 
         if ( pathToMp3 ) {
           return [200, { path: pathToMp3 }];
