@@ -1,0 +1,7 @@
+# exclude stuff not used in deploy
+/_history
+/node_modules
+
+# exclude logs and config file
+/config/*
+/logs/*
