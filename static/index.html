@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<head>
+
+	<link rel="icon" href="favicon.png">
+
+	<meta charset='utf-8'/>
+	<meta name='viewport'
+				content='width=device-width, initial-scale=1'/>
+
+	<link rel='stylesheet' type='text/css'
+				href='index.css'/>
+
+</head>
+<body>
+
+
+	<div id='loader'>
+		<div class="lds-ellipsis">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+	</div>
+
+	<div id='queryBack'>
+		<div class='queryMenu'>
+			<form class='queryForm'>
+				<div class='queryLine'>
+					<span>От</span>
+					<input type="date" id="from">
+				</div>
+				<div class='queryLine'>
+					<span>До</span>
+					<input type="date" id="to">
+				</div>
+				<div class='queryLine'>
+					<input id='submit' type='submit'
+					value='Поиск' onclick='return submitQuery();'>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div class='title'>
+		<span class='titleText unsel'>Звонки</span>
+		<div class='goBack unsel'>
+			<i class="fas fa-chevron-left"></i>
+			<span>Назад</span>
+		</div>
+	</div>
+
+	<div class='content'>
+
+
+		<div class='query'>
+			<span id='query'>
+				18.08.2020 10:00 - 19.08.2020 22:00
+			</span>
+		</div>
+
+		<div class='charts inout'>
+			<div class='inoutContent'>
+				<p>Входящие</p>
+				<div class='green overalCalls'>
+					<i class="fas fa-arrow-down"></i>
+					<span id='ingoingCalls'>173</span>
+				</div>
+				<div class="inoutBottom">
+					<div class='inoutBottomContainer missedCalls'>
+						<span>Пропущено:</span>
+						<span>15</span>
+					</div>
+					<div class='inoutBottomContainer missedCalls'>
+						<span>Сброшено:</span>
+						<span>2</span>
+					</div>
+				</div>
+			</div>
+			<div class='verticalLine'></div>
+			<div class='inoutContent'>
+				<p>Исходящие</p>
+				<div class='yellow overalCalls'>
+					<i class="fas fa-arrow-up"></i>
+					<span id='outgoingCalls'>54</span>
+				</div>
+				<div class="inoutBottom">
+					<div class='inoutBottomContainer missedCalls'>
+						<span>Пропущено:</span>
+						<span>15</span>
+					</div>
+					<div class='inoutBottomContainer missedCalls'>
+						<span>Сброшено:</span>
+						<span>2</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class='row'>
+			<div class='charts chartist'>
+				<div>
+					<p>Принятые</p>
+				</div>
+				<div class='ct-chart chart-daily'></div>
+			</div>
+			<div class='charts chartist'>
+				<div>
+					<p>Пропушенные</p>
+				</div>
+				<div class='ct-chart chart-hourly'></div>
+			</div>
+		</div>
+
+		<div class='charts table'>
+			<div class='tableTitle'>
+				<div class='tableTitileBox'>
+					<div class='tableTitleContainer'>
+						<span>Информация и записи звонков</span>
+					</div>
+					<div class='tableTitleContainer'>
+						<span>20 из 205</span>
+					</div>
+				</div>
+				<div class='horizontal-line'></div>
+				<div class='tableTitileBox'>
+					<div class='tableTitleContainer'>
+						<input type="checkbox" name='in' checked>
+						<label for="in">Входящие</label>
+						<input type="checkbox" name='out' checked>
+						<label for="out">Исходящие</label>
+						<input type="checkbox" name='answer' checked>
+						<label for="answer">Принятые</label>
+						<input type="checkbox" name='noanswer' checked>
+						<label for="noanswer">Пропущенные</label>
+					</div>
+					<div class='tableTitleContainer'>
+						<button onclick='updateTable()'>Обновить</button>
+					</div>
+				</div>
+			</div>
+
+			<div class='tableDiv'>
+				<div id='tableLoader'>
+					<div class="lds-ellipsis">
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+					</div>
+				</div>
+				<table class='tableContent'>
+					<tr class='tableNames'>
+						<td>Направление</td>
+						<td>Номер</td>
+						<td>Статус</td>
+						<td>Длительность</td>
+						<td>Запись</td>
+					</tr>
+					<tr class='tableValues'>
+						<td>Входящий</td>
+						<td>+7(965)37-09-254</td>
+						<td>Отвечен</td>
+						<td>1:24</td>
+						<td>
+							<a href="#" onclick="return false;">
+								<i class="far fa-play-circle"></i>
+							</a>
+						</td>
+					</tr>
+					<tr class='tableValues'>
+						<td>Входящий</td>
+						<td>+7(965)37-09-254</td>
+						<td>Отвечен</td>
+						<td>1:24</td>
+						<td>
+							<a href="#" onclick="return false;">
+								<i class="far fa-play-circle"></i>
+							</a>
+						</td>
+					</tr>
+					<tr class='tableValues'>
+						<td>Входящий</td>
+						<td>+7(965)37-09-254</td>
+						<td>Отвечен</td>
+						<td>1:24</td>
+						<td>
+							<a href="#" onclick="return false;">
+								<i class="far fa-play-circle"></i>
+							</a>
+						</td>
+					</tr>
+					<tr class='tableValues'>
+						<td>Входящий</td>
+						<td>+7(965)37-09-254</td>
+						<td>Отвечен</td>
+						<td>1:24</td>
+						<td>
+							<a href="#" onclick="return false;">
+								<i class="far fa-play-circle"></i>
+							</a>
+						</td>
+					</tr>
+					<tr class='tableValues'>
+						<td>Входящий</td>
+						<td>+7(965)37-09-254</td>
+						<td>Отвечен</td>
+						<td>1:24</td>
+						<td>
+							<a href="#" onclick="return false;">
+								<i class="far fa-play-circle"></i>
+							</a>
+						</td>
+					</tr>
+					<tr class='tableValues'>
+						<td>Входящий</td>
+						<td>+7(965)37-09-254</td>
+						<td>Отвечен</td>
+						<td>1:24</td>
+						<td>
+							<a href="#" onclick="return false;">
+								<i class="far fa-play-circle"></i>
+							</a>
+						</td>
+					</tr>
+					<tr class='tableValues'>
+						<td>Входящий</td>
+						<td>+7(965)37-09-254</td>
+						<td>Отвечен</td>
+						<td>1:24</td>
+						<td>
+							<a href="#" onclick="return false;">
+								<i class="far fa-play-circle"></i>
+							</a>
+						</td>
+					</tr>
+					<tr class='tableValues'>
+						<td>Входящий</td>
+						<td>+7(965)37-09-254</td>
+						<td>Отвечен</td>
+						<td>1:24</td>
+						<td>
+							<a href="#" onclick="return false;">
+								<i class="far fa-play-circle"></i>
+							</a>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<div class='pages'>
+				<div class='tableTitle tableTitileBox pagesDiv'>
+					<a href="#" class='pagesContainer'>1</a>
+					<a href="#" class='pagesContainer'>2</a>
+					<a href="#" class='pagesContainer'>3</a>
+					<a href="#" class='pagesContainer'>4</a>
+					<a href="#" class='pagesContainer'>5</a>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Adding the dependencies -->
+	<link rel='stylesheet' type='text/css'
+				href='dep/fa.css'/>
+
+	<link rel="stylesheet" href='dep/chartist.css'>
+	<script src='dep/chartist.js'></script>
+	<script src='dep/chartist-pointlabels.js'></script>
+
+	<link href="https://fonts.googleapis.com/css?family=Sen|Rubik&display=swap" rel="stylesheet">
+
+
+	<!-- And after all adding the main js script -->
+	<script type='text/javascript'
+					src='index.js'></script>
+
+</body>
