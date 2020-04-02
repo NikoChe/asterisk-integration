@@ -28,7 +28,6 @@ class Config {
         host: '0.0.0.0',
         port: '8080',
         knownIPs: ['127.0.0.1'],
-//        useIPv6: false,
     	},
 
       asterisk: {
@@ -104,12 +103,12 @@ class Server {
     this.config = configFile;
     this.routing = {
       'callStatistics' : this.callStatistics,
-      'alive'          : this.amIAlive,
-      'recording'      : this.recording,
+      'aliveStatus'    : this.aliveStatus,
+      'recordingFile'  : this.getRecordingFile,
     };
   };
 
-  error( errorCode ) {
+  static error( errorCode ) {
     return [ errorCode ];
   };
 
@@ -118,50 +117,32 @@ class Server {
   };
 
   // Needs testing
-  async recording( method, destination ) {
-    if ( destination.length > 2 || method != 'GET' ) {
-      console.log('first')
-      return this.error(400);
-
-    } else if ( destination.length = 1 ) {
-      console.log('second')
-      return this.error(400);
+  async getRecordingFile( method, destination ) {
+    if ( destination.length != 2 || method != 'GET' ) {
+      return Server.error(400);
 
     } else {
       let callId = destination[1];
       let ls = `ls ./rec | grep ${callId}`;
+      var filename = null;
 
-      var isRecordExists = false;
-
-      exec( ls,
-          ( err, stderr, stdout ) => {
-        if ( err || stderr ) {
-          let error = err? err:stderr;
-          log.error(error);
-
-        } else if ( stdout ) {
-          isRecordExists = true;
-
-        };
+      exec( ls, ( err, stdout ) => {
+        filename = stdout;
       });
 
-      if ( isRecordExists ) {
-        return [200, { path: `recordings/${callId}.mp3` }];
+      if ( filename ) {
+        return [200, { path: `recordings/${filename}` }];
 
       } else {
         let query = `SELECT recordingfile FROM cdr \
-                     WHERE uniqueid="${callId} LIMIT 1"`;
+                     WHERE uniqueid="${callId}" LIMIT 1`;
 
         let queryResult = await db.execQuery(query);
+        let recordingfile = queryResult['recordingfile'];
 
-        try {
-          let recordingfile = queryResult['recordingfile'];
-
-        } catch(err) {
-          console.log('угадал')
-          log.debug(err);
-          return this.error(404);
-
+        if ( !recordingfile ) {
+          log.debug(`There's no recording in DB.`);
+          return Server.error(404);
         };
 
         let recordsFolder = params.asterisk.recordsFolder;
@@ -169,22 +150,16 @@ class Server {
 
         var pathToMp3 = '';
 
-        exec( `sox ${pathToGsm}/.gsm ./rec/${callId}.mp3`,
-            ( err, stderr, stdout ) => {
-              if ( err || stderr ) {
-                let error = err? err:stderr;
-                log.debug(error);
-
-              } else {
-                pathToMp3 = `recordings/${callId}.mp3`;
-
-              };
-            });
+        exec( `sox ${pathToGsm} ./rec/${callId}.mp3`, ( err, stdout ) => {
+          if ( !stdout ) {
+            pathToMp3 = `recordings/${callId}.mp3`;
+          };
+        });
 
         if ( pathToMp3 ) {
           return [200, { path: pathToMp3 }];
         } else {
-          return this.error(500);
+          return Server.error(500);
         };
 
       };
@@ -192,9 +167,9 @@ class Server {
   };
 
 
-  async callStatistics(method, destination) {
+  async callStatistics( method, destination ) {
     if ( destination.length != 3 || method != 'GET' ) {
-      return this.error(400);
+      return Server.error(400);
 
     } else {
       let from = destination[1].replace(/_/g, ' ');
@@ -215,7 +190,7 @@ class Server {
   };
 
 
-  async amIAlive(method, destination) {
+  async aliveStatus( method, destination ) {
     let data = {
       foo: 'bar',
       ping: 'pong',
@@ -240,8 +215,8 @@ class Server {
     let dest = this.parse(url);
 
     try {
-      var response = await this.routing[ dest[0] ](method, dest);
-      var data = response[1]? JSON.stringify(response[1]):'';
+      var response = await this.routing[ dest[0] ]( method, dest );
+      var data = response[1]? JSON.stringify( response[1] ):'';
       var code = response[0];
 
     } catch(err) {
@@ -419,7 +394,7 @@ class Asterisk {
 
 
 (async () => {
-  let params = Config.read();
+  params = Config.read();
   if (params){
 
   //console.log(Config.check(params));
