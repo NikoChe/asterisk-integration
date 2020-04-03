@@ -171,6 +171,10 @@ async function tableShowPage( num ) {
     }
   };
 
+  let overall = filteredData.length;
+  let pageInfo = document.getElementById('pageInfo');
+  pageInfo.innerText = `${ pageSize } из ${ overall }`;
+
   var pages = [];
   while ( filteredData.length ) {
     pages.push( filteredData.splice(0, pageSize) );
@@ -179,9 +183,6 @@ async function tableShowPage( num ) {
   let endTime = Date.now();
   let diff = endTime - startTime;
   let toWait = diff<300? 300-diff:0
-
-  let pageInfo = document.getElementById('pageInfo');
-  pageInfo.innerText = `${ pageSize } из ${ filteredData.length }`;
 
   await setTimeout(() => {
 
