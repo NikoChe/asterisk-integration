@@ -181,6 +181,7 @@ async function tableShowPage( num ) {
 	    let content = page[i];
 	    let number = content.dcontext == 'to'? 'src':'dst'
 	    console.log( number )
+	    console.log( content )
 	    tableContent += `<tr class='tableValues'> \
 							        <td class='${ colorMapping[ content['dcontext'] ] }'> \
 							        ${ direcMapping[ content['dcontext'] ] }</td> \
