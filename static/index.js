@@ -180,7 +180,11 @@ async function tableShowPage( num ) {
   let diff = endTime - startTime;
   let toWait = diff<300? 300-diff:0
 
+  let pageInfo = document.getElementById('pageInfo');
+  pageInfo.innerText = `${ pageSize } из ${ filteredData.length }`;
+
   await setTimeout(() => {
+
 	  var table = document.getElementById('table');
 
     let tableContent = '';
