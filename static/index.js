@@ -164,7 +164,7 @@ async function tableShowPage( num ) {
     if ( (( isIn == filter[ 'in' ] && isIn ) ||
     	   ( isOut == filter[ 'out' ] && isOut )) &&
     	   (( isAnswer == filter[ 'answer' ] && isAnswer ) ||
-    	   ( isNoAnswer == filter[ 'noanswer' ] && isNoAnswer )) {
+    	   ( isNoAnswer == filter[ 'noanswer' ] && isNoAnswer )) ) {
     	filteredData.push( data[i] );
       console.log('=====================')
       console.log(( isIn == filter[ 'in' ] && isIn ) ||
