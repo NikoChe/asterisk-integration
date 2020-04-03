@@ -172,11 +172,17 @@ async function tableShowPage( num ) {
 	    'ANSWERED'  : 'Отвечен',
 	  };
 
+	  let colorMapping = {
+      'to'   : 'green',
+      'from' : 'yellow',
+	  };
+
 	  for ( let i = 0; i < page.length; i++ ) {
 	    let content = page[i];
 	    let number = content.dcontext == 'to'? 'src':'dst'
 	    tableContent += `<tr class='tableValues'> \
-							        <td>${ direcMapping[ content['dcontext'] ] }</td> \
+							        <td class='${ colorMapping[ content['dcontext'] ] }'> \
+							        ${ direcMapping[ content['dcontext'] ] }</td> \
 							        <td>${ content['number'] }</td> \
 							        <td>${ dispMapping[ content['disposition'] ] }</td> \
 							        <td>${ content['billsec'] }</td> \
