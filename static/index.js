@@ -116,6 +116,7 @@ async function groupData() {
   
   let fromGrouped = groupBy( from, 'disposition' );
   values.from.na = fromGrouped['NO ANSWER'].length;
+  values.from.na += fromGrouped['FAILED'].length;
   values.from.busy = fromGrouped['BUSY'].length;
 
   // charts
@@ -159,7 +160,8 @@ async function tableShowPage( num ) {
     let isOut = data[i][ 'dcontext' ] == 'from';
     let isAnswer = data[i][ 'disposition' ] == 'ANSWERED';
     let isNoAnswer = data[i][ 'disposition' ] == 'NO ANSWER' ||
-                     data[i][ 'disposition' ] == 'BUSY';
+                     data[i][ 'disposition' ] == 'BUSY' ||
+                     data[i][ 'disposition' ] == 'FAILED';
 
     if ( isIn == filter[ 'in' ] == true ||
     	   isOut == filter[ 'out' ] == true &&
@@ -208,6 +210,7 @@ async function tableShowPage( num ) {
 
 	  let dispMapping = {
 	    'NO ANSWER' : 'Без Ответа',
+	    'FAILED'    : 'Без Ответа',
 	    'BUSY'      : 'Сброшен',
 	    'ANSWERED'  : 'Отвечен',
 	  };
