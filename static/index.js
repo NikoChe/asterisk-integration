@@ -175,10 +175,10 @@ async function tableShowPage( num ) {
 	    let content = page[i];
 	    let number = content.dcontext == 'to'? 'src':'dst'
 	    table.innerHTML += `<tr class='tableValues'> \
-							            <td>${ direcMapping[ content[dcontext] ] }</td> \
-							            <td>${ content[number] }</td> \
-							            <td>${ dispMapping[ content[disposition] ] }</td> \
-							            <td>${ content[billsec] }</td> \
+							            <td>${ direcMapping[ content['dcontext'] ] }</td> \
+							            <td>${ content['number'] }</td> \
+							            <td>${ dispMapping[ content['disposition'] ] }</td> \
+							            <td>${ content['billsec'] }</td> \
 							            <td> \
 								          <a href="#" onclick="return false;"> \
 									        <i class="far fa-play-circle"></i> \
