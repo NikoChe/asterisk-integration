@@ -2,7 +2,7 @@
 
 
 
-var loader, tableLoader, queryPage, query, pages;
+var loader, tableLoader, queryPage, query, data;
 var pageSize = 10; // auto init in future
 var chartsWidth = 6;
 
@@ -91,7 +91,7 @@ async function get( path ) {
 }
 
 
-async function groupData( data ) {
+async function groupData() {
   let values = {
     to : {
       all : null,
@@ -130,12 +130,6 @@ async function groupData( data ) {
   //  fromChart.push( from.splice(0, 20) );
   //};
   ///////
-  
-  pages = [];
-  
-  while ( data.length ) {
-    pages.push( data.splice(0, pageSize) );
-  };
 
   return values;
   
@@ -144,6 +138,46 @@ async function groupData( data ) {
 
 async function tableShowPage( num ) {
   fadeIn( tableLoader );
+
+  let filterIn = document.getElementById('in');
+  let filterOut = document.getElementById('out');
+  let filterAnswer = document.getElementById('answer');
+  let filterNoAnswer = document.getElementById('noanswer');
+
+  let filter = {
+    'in'      : filterIn.checked,
+    'out'     : filterOut.checked,
+    'answer'  : filterAnswer.checked,
+    'noanswer': filterNoAnswer.checked,
+  };
+
+
+  let filteredData = () => {
+    let filtered = [];
+
+    for ( let i = 0; i < data.length; i++ ) {
+      let isIn = data[i][ 'dcontext' ] == 'to';
+      let isOut = data[i][ 'dcontext' ] == 'from';
+      let isAnswer = data[i][ 'disposition' ] == 'ANSWER';
+      let isNoAnswer = data[i][ 'disposition' ] == 'NO ANSWER' || \
+                       data[i][ 'disposition' ] == 'BUSY';
+
+      if ( isIn == filter[ 'in' ] || \
+      	   isOut == filter[ 'out' ] && \
+      	   isAnswer == filter[ 'answer' ] || \
+      	   isNoAnswer == filter[ 'isNoAnswer' ]) {
+      	filtered.push( data[i] );
+      };
+    };
+
+    return filtered;
+  };
+
+  var pages = [];
+  while ( data.length ) {
+    pages.push( data.splice(0, pageSize) );
+  };
+
 
   await setTimeout(() => {
 
@@ -220,9 +254,8 @@ async function initPage( values ) {
 
   let outBusy = document.getElementById('outBusy');
   outBusy.innerText = values.from.busy;
-
-  tableShowPage( 1 );
 }
+
 
 async function requestData() {
   query = [
@@ -237,7 +270,7 @@ async function requestData() {
 
     let requestLink = `callStatistics/${query[0]}${query[1]}`;
     let rawJSON = await get( requestLink );
-    return JSON.parse( rawJSON );
+    data = JSON.parse( rawJSON );
     
   };
 };
@@ -248,10 +281,11 @@ async function submitQuery() {
 
   fadeIn( loader );
 
-  let data = await requestData();
-  let formatedData = await groupData( data );
+  await requestData();
+  let formatedData = await groupData();
 
   initPage( formatedData );
+  tableShowPage( 1 );
 
   let endTime = Date.now();
   let requestTime = endTime - startTime;
