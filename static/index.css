@@ -335,6 +335,7 @@ p {
 }
 
 .tableValues a {
+	font-size: 10pt;
 	text-decoration: none;
 	color: #ccc;
 }

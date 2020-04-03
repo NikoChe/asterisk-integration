@@ -250,6 +250,11 @@ async function tableShowPage( num ) {
 }
 
 
+async function getRec( id ) {
+  let response = await get( `recordingFile/${id}` );
+}
+
+
 function tableReloadPage() {
   tableShowPage( 1 );
 };
