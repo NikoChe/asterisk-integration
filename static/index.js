@@ -243,6 +243,7 @@ async function tableShowPage( num ) {
 		};
 
     table.innerHTML = tableContent;
+    tablePages.innerHTML = pagesContent;
 
     fadeOut( tableLoader );
   }, toWait);
