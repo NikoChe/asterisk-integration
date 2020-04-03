@@ -161,12 +161,10 @@ async function tableShowPage( num ) {
     let isNoAnswer = data[i][ 'disposition' ] == 'NO ANSWER' ||
                      data[i][ 'disposition' ] == 'BUSY';
 
-    console.log('====================')
-    console.log( isIn );
-    console.log( isOut );
-    console.log( isAnswer );
-    console.log( isNoAnswer );
-    console.log( data[i] )
+    console.log(  isIn == filter[ 'in' ] ||
+    	   isOut == filter[ 'out' ] &&
+    	   isAnswer == filter[ 'answer' ] ||
+    	   isNoAnswer == filter[ 'isNoAnswer' ] )
 
     if ( isIn == filter[ 'in' ] ||
     	   isOut == filter[ 'out' ] &&
