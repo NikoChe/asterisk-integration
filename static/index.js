@@ -186,6 +186,7 @@ async function tableShowPage( num ) {
     let tableContent = '';
 	  tableContent += "<tr class='tableNames'> \
 							          <td>Направление</td> \
+							          <td>Время</td> \
 							          <td>Номер</td> \
 							          <td>Статус</td> \
 							          <td>Длительность</td> \
@@ -217,6 +218,7 @@ async function tableShowPage( num ) {
 	    tableContent += `<tr class='tableValues'> \
 							        <td class='${ colorMapping[ content['dcontext'] ] }'> \
 							        ${ direcMapping[ content['dcontext'] ] }</td> \
+                      <td>${ content['calldate'] }</td> \
 							        <td>${ content[number] }</td> \
 							        <td>${ dispMapping[ content['disposition'] ] }</td> \
 							        <td>${ content['billsec'] }</td> \
