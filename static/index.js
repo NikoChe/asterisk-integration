@@ -157,7 +157,7 @@ async function tableShowPage( num ) {
   for ( let i = 0; i < data.length; i++ ) {
     let isIn = data[i][ 'dcontext' ] == 'to';
     let isOut = data[i][ 'dcontext' ] == 'from';
-    let isAnswer = data[i][ 'disposition' ] == 'ANSWER';
+    let isAnswer = data[i][ 'disposition' ] == 'ANSWERED';
     let isNoAnswer = data[i][ 'disposition' ] == 'NO ANSWER' ||
                      data[i][ 'disposition' ] == 'BUSY';
 
