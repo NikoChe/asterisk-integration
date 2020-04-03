@@ -259,7 +259,7 @@ function goBack() {
   query = null;
   data = null;
   queryPage.style.display = 'flex';
-  queryPage.style.opacity = 1;
+  queryPage.style.zIndex = 100;
 };
 
 
@@ -324,7 +324,7 @@ async function submitQuery() {
   let toWait = requestTime<200? 200-requestTime:0;
 
   await setTimeout(() => {
-    queryPage.style.display = 'none';
+    queryPage.style.zIndex = -20;
     queryPage.style.opacity = 0;
     fadeOut(loader);
   }, toWait);
