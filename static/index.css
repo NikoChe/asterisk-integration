@@ -413,6 +413,7 @@ p {
 	font-size: 11pt;
 	height: 40px;
 	color: #545454;
+	max-height: 50px;
 }
 
 .tableContent {
@@ -425,6 +426,7 @@ p {
 .tableValues {
 	font-family: "Rubik", sans;
 	color: #aaa;
+	max-height: 75px;
 }
 
 .tableContent tbody tr:nth-child(even) td {

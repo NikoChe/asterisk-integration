@@ -180,7 +180,9 @@ async function tableShowPage( num ) {
   await setTimeout(() => {
 
 	  var table = document.getElementById('table');
+    var tablePages = document.getElementById('pages');
 
+	  let pagesContent = '';
     let tableContent = '';
 	  tableContent += "<tr class='tableNames'> \
 							          <td>Направление</td> \
@@ -190,7 +192,6 @@ async function tableShowPage( num ) {
 							          <td>Длительность</td> \
 							          <td>Запись</td> \
 						            </tr>"
-	  
 
 	  let page = pages[ num - 1 ];
 
@@ -211,7 +212,7 @@ async function tableShowPage( num ) {
       'from' : 'yellow',
 	  };
 
-    if ( page ) {
+    if ( page && pages ) {
 		  for ( let i = 0; i < page.length; i++ ) {
 		    let content = page[i];
 		    let number = content.dcontext == 'to'? 'src':'dst';
@@ -229,6 +230,14 @@ async function tableShowPage( num ) {
 								        </td> \
 							          </tr>`;
 		  };
+
+      for ( let i = 0; i < pages.length; i++ ) {
+        let pageNum = i + 1;
+        pagesContent += `<a href="#" class='pagesContainer' \
+                        onclick='tableShowPage(${pageNum});return false'>\
+                        ${pageNum}</a>`
+      };
+
 		} else {
       console.error("There's nothing to show");
 		};
@@ -241,7 +250,7 @@ async function tableShowPage( num ) {
 
 
 function tableReloadPage() {
-  tableShowPage( currentPage );
+  tableShowPage( 1 );
 };
 
 
