@@ -159,15 +159,17 @@ async function tableShowPage( num ) {
     let isIn = data[i][ 'dcontext' ] == 'to';
     let isOut = data[i][ 'dcontext' ] == 'from';
     let isAnswer = data[i][ 'disposition' ] == 'ANSWERED';
-    let isNoAnswer = data[i][ 'disposition' ] == 'NO ANSWER' ||
-                     data[i][ 'disposition' ] == 'BUSY' ||
-                     data[i][ 'disposition' ] == 'FAILED';
+    let isNoAnswer = data[i][ 'disposition' ] != 'ANSWERED';
 
     if ( ( isIn == filter[ 'in' ] && isIn ) ||
     	   ( isOut == filter[ 'out' ] && isOut ) &&
     	   ( isAnswer == filter[ 'answer' ] && isAnswer ) ||
     	   ( isNoAnswer == filter[ 'noanswer' ] && isNoAnswer ) ) {
     	filteredData.push( data[i] );
+      console.log(isIn)
+      console.log(isOut)
+      console.log(isAnswer)
+      console.log(isNoAnswer)
     } else {
     	console.log( data[i] );
     }
