@@ -2,7 +2,7 @@
 
 
 
-var loader, tableLoader, query;
+var loader, tableLoader, queryPage, query;
 var pageSize = 10; // auto init in future
 var chartsWidth = 6;
 
@@ -192,7 +192,7 @@ async function submitQuery() {
   let toWait = requestTime<200? 200-requestTime:0 
 
   await setTimeout(() => {
-    query.style.display = 'none';
+    queryPage.style.display = 'none';
     fadeOut(loader);
   }, toWait);
 }
@@ -213,7 +213,7 @@ window.onload = function() {
   // Remove Loader when all downloaded
   loader = document.getElementById('loader');
   tableLoader = document.getElementById('tableLoader');
-  query = document.getElementById('queryBack');
+  queryPage = document.getElementById('queryBack');
 
   fadeOut(loader)
 };
