@@ -258,9 +258,9 @@ function tableReloadPage() {
 function goBack() {
   query = null;
   data = null;
-  queryPage.opacity = 0;
-  queryPage.display = 'flex';
-  queryPage.opacity = 1;
+  queryPage.style.opacity = 0;
+  queryPage.style.display = 'flex';
+  queryPage.style.opacity = 1;
 };
 
 
