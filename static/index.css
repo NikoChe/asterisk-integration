@@ -144,6 +144,7 @@ p {
 	height: 100vh;
 	background-color: #151515;
 	display: flex;
+  transition: opacity 300ms;
 }
 
 .queryMenu {
