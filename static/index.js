@@ -187,7 +187,7 @@ async function submitQuery() {
   let endTime = Date.now();
   let requestTime = endTime - startTime;
 
-  console.log('Request time:', reqestTime );
+  console.log('Request time:', requestTime );
 
   let toWait = requestTime<200? 200-requestTime:0 
 
