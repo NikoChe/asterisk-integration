@@ -161,17 +161,14 @@ async function tableShowPage( num ) {
     let isNoAnswer = data[i][ 'disposition' ] == 'NO ANSWER' ||
                      data[i][ 'disposition' ] == 'BUSY';
 
-    console.log(  isIn == filter[ 'in' ] ||
-    	   isOut == filter[ 'out' ] &&
-    	   isAnswer == filter[ 'answer' ] ||
-    	   isNoAnswer == filter[ 'isNoAnswer' ] )
-
     if ( isIn == filter[ 'in' ] ||
     	   isOut == filter[ 'out' ] &&
     	   isAnswer == filter[ 'answer' ] ||
     	   isNoAnswer == filter[ 'isNoAnswer' ]) {
     	filteredData.push( data[i] );
-    };
+    } else {
+    	console.log( data[i] );
+    }
   };
 
   console.log( 'FilteredData:', filteredData )
