@@ -255,6 +255,14 @@ function tableReloadPage() {
 };
 
 
+function goBack() {
+  query = null;
+  data = null;
+  fadeIn( queryPage );
+};
+
+
+
 async function initPage( values ) {
   let queryString = `${query[0]}- ${query[1]}`;
   let formatedQuery = queryString.replace(/_|\//g, ' ');
