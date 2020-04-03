@@ -258,7 +258,6 @@ function tableReloadPage() {
 function goBack() {
   query = null;
   data = null;
-  queryPage.style.opacity = 0;
   queryPage.style.display = 'flex';
   queryPage.style.opacity = 1;
 };
@@ -326,6 +325,7 @@ async function submitQuery() {
 
   await setTimeout(() => {
     queryPage.style.display = 'none';
+    queryPage.style.opacity = 0;
     fadeOut(loader);
   }, toWait);
 }
