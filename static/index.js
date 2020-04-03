@@ -174,10 +174,14 @@ async function tableShowPage( num ) {
     return filtered;
   };
 
+  console.log( 'FilteredData:', filteredData )
+
   var pages = [];
   while ( filteredData.length ) {
     pages.push( filteredData.splice(0, pageSize) );
   };
+
+  console.log( 'pages:', pages )
 
   let endTime = Date.now();
   let diff = endTime - startTime;
@@ -197,6 +201,8 @@ async function tableShowPage( num ) {
 	  
 
 	  let page = pages[ num - 1 ];
+
+    console.log(page)
 
 	  let direcMapping = {
 	    'to'   : 'Входящий',
