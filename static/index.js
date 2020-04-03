@@ -105,12 +105,12 @@ async function groupData() {
   values.from.all = from.length;
   
   let toGrouped = groupBy( to, 'disposition' );
-  values.to.na = toGrouped['NO ANSWER'].length;
+  values.to.na = toGrouped['NO ANSWER']? toGrouped['NO ANSWER']:0;
   
   let fromGrouped = groupBy( from, 'disposition' );
-  values.from.na = fromGrouped['NO ANSWER'].length;
-  values.from.na += fromGrouped['FAILED'].length;
-  values.from.busy = fromGrouped['BUSY'].length;
+  values.from.na = fromGrouped['NO ANSWER']? fromGrouped['NO ANSWER'].length:0;
+  values.from.na += fromGrouped['FAILED']? fromGrouped['FAILED'].length:0;
+  values.from.busy = fromGrouped['BUSY']? fromGrouped['BUSY'].length:0;
 
   // charts
   //let toChart = [];
