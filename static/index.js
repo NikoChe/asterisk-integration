@@ -2,7 +2,7 @@
 
 
 
-var loader, tableLoader, queryPage, query;
+var loader, tableLoader, queryPage, query, pages;
 var pageSize = 10; // auto init in future
 var chartsWidth = 6;
 
@@ -131,18 +131,68 @@ async function groupData( data ) {
   //};
   ///////
   
-  let pages = [];
+  pages = [];
   
   while ( data.length ) {
     pages.push( data.splice(0, pageSize) );
   };
 
-  return { values, pages };
+  return values;
   
 };
 
 
-async function initPage( { values, pages } ) {
+async function tableShowPage( num ) {
+  fadeIn( tableLoader );
+
+  await setTimeout(() => {
+
+	  var table = document.getElementById('table');
+	  table.innerHTML = '';
+	  table.innerHTML += "<tr class='tableNames'> \
+							          <td>Направление</td> \
+							          <td>Номер</td> \
+							          <td>Статус</td> \
+							          <td>Длительность</td> \
+							          <td>Запись</td> \
+						            </tr>"
+	  
+
+	  let page = pages[ num - 1 ];
+
+	  let direcMapping = {
+	    'to'   : 'Входящий',
+	    'from' : 'Исходящий',
+	  };
+
+	  let dispMapping = {
+	    'NO ANSWER' : 'Без Ответа',
+	    'BUSY'      : 'Сброшен',
+	    'ANSWERED'  : 'Отвечен',
+	  };
+
+	  for ( let i = 0; i < page.length; i++ ) {
+	    let content = page[i];
+	    let number = content.dcontext == 'to'? 'src':'dst'
+	    table.innerHTML += `<tr class='tableValues'> \
+							            <td>${ direcMapping[ content[dcontext] ] }</td> \
+							            <td>${ content[number] }</td> \
+							            <td>${ dispMapping[ content[disposition] ] }</td> \
+							            <td>${ content[billsec] }</td> \
+							            <td> \
+								          <a href="#" onclick="return false;"> \
+									        <i class="far fa-play-circle"></i> \
+								          </a> \
+							            </td> \
+						              </tr>`;
+	  };
+
+    fadeOut( tableLoader );
+  }, 300);
+}
+
+
+async function initPage( values ) {
   let queryString = `${query[0]}- ${query[1]}`;
   let formatedQuery = queryString.replace(/_|\//g, ' ');
   document.getElementById('query').innerText = formatedQuery;
@@ -162,8 +212,8 @@ async function initPage( { values, pages } ) {
   let outBusy = document.getElementById('outBusy');
   outBusy.innerText = values.from.busy;
 
+  tableShowPage( 1 );
 }
-
 
 async function requestData() {
   query = [
@@ -187,7 +237,7 @@ async function requestData() {
 async function submitQuery() {
   let startTime = Date.now();
 
-  fadeIn(loader);
+  fadeIn( loader );
 
   let data = await requestData();
   let formatedData = await groupData( data );
