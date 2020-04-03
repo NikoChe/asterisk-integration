@@ -148,8 +148,9 @@ async function tableShowPage( num ) {
   await setTimeout(() => {
 
 	  var table = document.getElementById('table');
-	  table.innerHTML = '';
-	  table.innerHTML += "<tr class='tableNames'> \
+
+    let tableContent = '';
+	  tableContent += "<tr class='tableNames'> \
 							          <td>Направление</td> \
 							          <td>Номер</td> \
 							          <td>Статус</td> \
@@ -174,18 +175,20 @@ async function tableShowPage( num ) {
 	  for ( let i = 0; i < page.length; i++ ) {
 	    let content = page[i];
 	    let number = content.dcontext == 'to'? 'src':'dst'
-	    table.innerHTML += `<tr class='tableValues'> \
-							            <td>${ direcMapping[ content['dcontext'] ] }</td> \
-							            <td>${ content['number'] }</td> \
-							            <td>${ dispMapping[ content['disposition'] ] }</td> \
-							            <td>${ content['billsec'] }</td> \
-							            <td> \
-								          <a href="#" onclick="return false;"> \
-									        <i class="far fa-play-circle"></i> \
-								          </a> \
-							            </td> \
-						              </tr>`;
+	    tableContent += `<tr class='tableValues'> \
+							        <td>${ direcMapping[ content['dcontext'] ] }</td> \
+							        <td>${ content['number'] }</td> \
+							        <td>${ dispMapping[ content['disposition'] ] }</td> \
+							        <td>${ content['billsec'] }</td> \
+							        <td> \
+								      <a href="#" onclick="return false;"> \
+									    <i class="far fa-play-circle"></i> \
+								      </a> \
+							        </td> \
+						          </tr>`;
 	  };
+
+    table.innerHTML = tableContent;
 
     fadeOut( tableLoader );
   }, 300);
