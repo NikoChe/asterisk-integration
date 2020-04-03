@@ -179,13 +179,11 @@ async function tableShowPage( num ) {
 
 	  for ( let i = 0; i < page.length; i++ ) {
 	    let content = page[i];
-	    let number = content.dcontext == 'to'? 'src':'dst'
-	    console.log( number )
-	    console.log( content )
+	    let number = content.dcontext == 'to'? 'src':'dst';
 	    tableContent += `<tr class='tableValues'> \
 							        <td class='${ colorMapping[ content['dcontext'] ] }'> \
 							        ${ direcMapping[ content['dcontext'] ] }</td> \
-							        <td>${ content['number'] }</td> \
+							        <td>${ content[number] }</td> \
 							        <td>${ dispMapping[ content['disposition'] ] }</td> \
 							        <td>${ content['billsec'] }</td> \
 							        <td> \
