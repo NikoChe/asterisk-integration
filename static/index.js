@@ -137,6 +137,7 @@ async function groupData() {
 
 
 async function tableShowPage( num ) {
+	let startTime = Date.now();
   fadeIn( tableLoader );
 
   let filterIn = document.getElementById('in');
@@ -174,13 +175,15 @@ async function tableShowPage( num ) {
   };
 
   var pages = [];
-  while ( data.length ) {
-    pages.push( data.splice(0, pageSize) );
+  while ( filteredData.length ) {
+    pages.push( filteredData.splice(0, pageSize) );
   };
 
+  let endTime = Date.now();
+  let diff = endTime - startTime;
+  let toWait = diff<300? 300-diff:0
 
   await setTimeout(() => {
-
 	  var table = document.getElementById('table');
 
     let tableContent = '';
@@ -231,7 +234,7 @@ async function tableShowPage( num ) {
     table.innerHTML = tableContent;
 
     fadeOut( tableLoader );
-  }, 300);
+  }, toWait);
 }
 
 
@@ -290,9 +293,9 @@ async function submitQuery() {
   let endTime = Date.now();
   let requestTime = endTime - startTime;
 
-  console.log('Request time:', requestTime );
+  console.log('Request and format time:', requestTime );
 
-  let toWait = requestTime<200? 200-requestTime:0 
+  let toWait = requestTime<200? 200-requestTime:0;
 
   await setTimeout(() => {
     queryPage.style.display = 'none';
