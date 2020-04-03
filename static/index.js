@@ -258,8 +258,8 @@ function tableReloadPage() {
 function goBack() {
   query = null;
   data = null;
-  queryPage.style.display = 'flex';
   queryPage.style.zIndex = 100;
+  queryPage.style.opacity = 1;
 };
 
 
