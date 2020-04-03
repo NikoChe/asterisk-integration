@@ -161,24 +161,20 @@ async function tableShowPage( num ) {
     let isNoAnswer = data[i][ 'disposition' ] == 'NO ANSWER' ||
                      data[i][ 'disposition' ] == 'BUSY';
 
-    if ( isIn == filter[ 'in' ] ||
-    	   isOut == filter[ 'out' ] &&
-    	   isAnswer == filter[ 'answer' ] ||
-    	   isNoAnswer == filter[ 'isNoAnswer' ]) {
+    if ( isIn == filter[ 'in' ] == true ||
+    	   isOut == filter[ 'out' ] == true &&
+    	   isAnswer == filter[ 'answer' ] == true ||
+    	   isNoAnswer == filter[ 'noanswer' ]) == true {
     	filteredData.push( data[i] );
     } else {
     	console.log( data[i] );
     }
   };
 
-  console.log( 'FilteredData:', filteredData )
-
   var pages = [];
   while ( filteredData.length ) {
     pages.push( filteredData.splice(0, pageSize) );
   };
-
-  console.log( 'pages:', pages )
 
   let endTime = Date.now();
   let diff = endTime - startTime;
@@ -198,8 +194,6 @@ async function tableShowPage( num ) {
 	  
 
 	  let page = pages[ num - 1 ];
-
-    console.log(page)
 
 	  let direcMapping = {
 	    'to'   : 'Входящий',
