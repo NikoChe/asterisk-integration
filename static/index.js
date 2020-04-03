@@ -224,8 +224,8 @@ async function tableShowPage( num ) {
 								        <td>${ dispMapping[ content['disposition'] ] }</td> \
 								        <td>${ content['billsec'] }</td> \
 								        <td> \
-									      <a href="#" onclick="return false;"> \
-										    <i class="far fa-play-circle"></i> \
+									      <a href="#" onclick="getRec(${ content['uniqueid'] });\
+									      return false"><i class="far fa-play-circle"></i> \
 									      </a> \
 								        </td> \
 							          </tr>`;
@@ -252,6 +252,13 @@ async function tableShowPage( num ) {
 
 async function getRec( id ) {
   let response = await get( `recordingFile/${id}` );
+  let { path } = JSON.parse( response );
+
+  if ( path ) {
+    window.open( path, '_blank' );
+  } else {
+    console.error( 'No such recording' );
+  };
 }
 
 
