@@ -251,6 +251,8 @@ async function tableShowPage( num ) {
 
 
 async function getRec( id ) {
+  console.log( id );
+
   let response = await get( `recordingFile/${id}` );
   let { path } = JSON.parse( response );
 
