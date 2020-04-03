@@ -149,9 +149,19 @@ async function initPage( { values, pages } ) {
 
   let ingoing = document.getElementById('ingoingCalls');
   ingoing.innerText = values.to.all;
+
+  let inMissed = document.getElementById('inMissed');
+  inMissed.innerText = values.to.na;  
   
   let outgoing = document.getElementById('outgoingCalls');
   outgoing.innerText = values.from.all;
+
+  let outMissed = document.getElementById('outMissed');
+  outMissed.innerText = values.from.na;
+
+  let outBusy = document.getElementById('outBusy');
+  outBusy.innerText = values.from.busy;
+
 }
 
 
