@@ -152,26 +152,21 @@ async function tableShowPage( num ) {
     'noanswer': filterNoAnswer.checked,
   };
 
+  let filteredData = [];
 
-  let filteredData = () => {
-    let filtered = [];
+  for ( let i = 0; i < data.length; i++ ) {
+    let isIn = data[i][ 'dcontext' ] == 'to';
+    let isOut = data[i][ 'dcontext' ] == 'from';
+    let isAnswer = data[i][ 'disposition' ] == 'ANSWER';
+    let isNoAnswer = data[i][ 'disposition' ] == 'NO ANSWER' ||
+                     data[i][ 'disposition' ] == 'BUSY';
 
-    for ( let i = 0; i < data.length; i++ ) {
-      let isIn = data[i][ 'dcontext' ] == 'to';
-      let isOut = data[i][ 'dcontext' ] == 'from';
-      let isAnswer = data[i][ 'disposition' ] == 'ANSWER';
-      let isNoAnswer = data[i][ 'disposition' ] == 'NO ANSWER' ||
-                       data[i][ 'disposition' ] == 'BUSY';
-
-      if ( isIn == filter[ 'in' ] ||
-      	   isOut == filter[ 'out' ] &&
-      	   isAnswer == filter[ 'answer' ] ||
-      	   isNoAnswer == filter[ 'isNoAnswer' ]) {
-      	filtered.push( data[i] );
-      };
+    if ( isIn == filter[ 'in' ] ||
+    	   isOut == filter[ 'out' ] &&
+    	   isAnswer == filter[ 'answer' ] ||
+    	   isNoAnswer == filter[ 'isNoAnswer' ]) {
+    	filteredData.push( data[i] );
     };
-
-    return filtered;
   };
 
   console.log( 'FilteredData:', filteredData )
