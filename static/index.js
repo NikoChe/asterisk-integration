@@ -3,6 +3,7 @@
 
 
 var loader, tableLoader, queryPage, query, data;
+var currentPage;
 var pageSize = 10; // auto init in future
 var chartsWidth = 6;
 
@@ -52,14 +53,6 @@ function fadeIn( elem ) {
 	elem.style.zIndex = '999';
 	elem.style.opacity = '1';
 };
-
-
-async function updateTable(query=null) {
-  fadeIn(tableLoader);
-  await setTimeout(() => {
-    fadeOut(tableLoader);
-  }, 500);
-}
 
 
 function groupBy( array, parameter ) {
@@ -138,6 +131,8 @@ async function groupData() {
 
 
 async function tableShowPage( num ) {
+  currentPage = num;
+
 	let startTime = Date.now();
   fadeIn( tableLoader );
 
@@ -166,12 +161,6 @@ async function tableShowPage( num ) {
     	   (( isAnswer == filter[ 'answer' ] && isAnswer ) ||
     	   ( isNoAnswer == filter[ 'noanswer' ] && isNoAnswer )) ) {
     	filteredData.push( data[i] );
-      console.log('=====================')
-      console.log(( isIn == filter[ 'in' ] && isIn ) ||
-    	   ( isOut == filter[ 'out' ] && isOut ) )
-      console.log( ( isAnswer == filter[ 'answer' ] && isAnswer ) ||
-    	   ( isNoAnswer == filter[ 'noanswer' ] && isNoAnswer ) )
-      console.log( data[i] )
     };
   };
 
@@ -222,29 +211,38 @@ async function tableShowPage( num ) {
       'from' : 'yellow',
 	  };
 
-	  for ( let i = 0; i < page.length; i++ ) {
-	    let content = page[i];
-	    let number = content.dcontext == 'to'? 'src':'dst';
-	    tableContent += `<tr class='tableValues'> \
-							        <td class='${ colorMapping[ content['dcontext'] ] }'> \
-							        ${ direcMapping[ content['dcontext'] ] }</td> \
-                      <td>${ content['calldate'] }</td> \
-							        <td>${ content[number] }</td> \
-							        <td>${ dispMapping[ content['disposition'] ] }</td> \
-							        <td>${ content['billsec'] }</td> \
-							        <td> \
-								      <a href="#" onclick="return false;"> \
-									    <i class="far fa-play-circle"></i> \
-								      </a> \
-							        </td> \
-						          </tr>`;
-	  };
+    if ( page ) {
+		  for ( let i = 0; i < page.length; i++ ) {
+		    let content = page[i];
+		    let number = content.dcontext == 'to'? 'src':'dst';
+		    tableContent += `<tr class='tableValues'> \
+								        <td class='${ colorMapping[ content['dcontext'] ] }'> \
+								        ${ direcMapping[ content['dcontext'] ] }</td> \
+	                      <td>${ content['calldate'] }</td> \
+								        <td>${ content[number] }</td> \
+								        <td>${ dispMapping[ content['disposition'] ] }</td> \
+								        <td>${ content['billsec'] }</td> \
+								        <td> \
+									      <a href="#" onclick="return false;"> \
+										    <i class="far fa-play-circle"></i> \
+									      </a> \
+								        </td> \
+							          </tr>`;
+		  };
+		} else {
+      console.error("There's nothing to show");
+		};
 
     table.innerHTML = tableContent;
 
     fadeOut( tableLoader );
   }, toWait);
 }
+
+
+function tableReloadPage() {
+  tableShowPage( currentPage );
+};
 
 
 async function initPage( values ) {
