@@ -105,7 +105,7 @@ async function groupData() {
   values.from.all = from.length;
   
   let toGrouped = groupBy( to, 'disposition' );
-  values.to.na = toGrouped['NO ANSWER']? toGrouped['NO ANSWER']:0;
+  values.to.na = toGrouped['NO ANSWER']? toGrouped['NO ANSWER'].length:0;
   
   let fromGrouped = groupBy( from, 'disposition' );
   values.from.na = fromGrouped['NO ANSWER']? fromGrouped['NO ANSWER'].length:0;
