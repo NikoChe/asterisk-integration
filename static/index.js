@@ -185,11 +185,11 @@ async function submitQuery() {
   initPage( formatedData );
 
   let endTime = Date.now();
-  let reqestTime = endTime - startTime;
+  let requestTime = endTime - startTime;
 
   console.log('Request time:', reqestTime );
 
-  let toWait = reqestTime<200? 200-requestTime:0 
+  let toWait = requestTime<200? 200-requestTime:0 
 
   await setTimeout(() => {
     query.style.display = 'none';
