@@ -159,12 +159,12 @@ async function tableShowPage( num ) {
       let isIn = data[i][ 'dcontext' ] == 'to';
       let isOut = data[i][ 'dcontext' ] == 'from';
       let isAnswer = data[i][ 'disposition' ] == 'ANSWER';
-      let isNoAnswer = data[i][ 'disposition' ] == 'NO ANSWER' || \
+      let isNoAnswer = data[i][ 'disposition' ] == 'NO ANSWER' ||
                        data[i][ 'disposition' ] == 'BUSY';
 
-      if ( isIn == filter[ 'in' ] || \
-      	   isOut == filter[ 'out' ] && \
-      	   isAnswer == filter[ 'answer' ] || \
+      if ( isIn == filter[ 'in' ] ||
+      	   isOut == filter[ 'out' ] &&
+      	   isAnswer == filter[ 'answer' ] ||
       	   isNoAnswer == filter[ 'isNoAnswer' ]) {
       	filtered.push( data[i] );
       };
