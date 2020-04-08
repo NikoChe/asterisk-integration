@@ -67,7 +67,7 @@ class Logger {
     let hour = date.getHours();
     let minute = date.getMinutes();
     let second = date.getSeconds();
-    let ms = Math.round( process.hrtime()[0] / 100 );
+    let ms = date.getMilliseconds();
 
     var currentTime = `${hour}:${minute}:${second} ${ms}`;
     var string = `${group} ${message}`;
