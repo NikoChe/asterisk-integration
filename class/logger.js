@@ -6,7 +6,7 @@ const type = Function.prototype.call.bind( Object.prototype.toString );
 
 // TASKS
 //  ? Create paths and files for logging into them
-//  ? Add log/debug levels
+//    ^ add autocreation with right permissions
 //  ? Add warning and error counters
 //  - Add time in logs
 //  - Add configuration on init
@@ -63,7 +63,13 @@ class Logger {
   };
 
   async appendLog(type, message, group) {
-    var ms = process.hrtime(); // nanoseconds
+    let date = new Date();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    let second = date.getSeconds();
+    let ms = Math.round( process.hrtime()[0] / 100 );
+
+    var currentTime = `${hour}:${minute}:${second} ${ms}`;
     var string = `${group} ${message}`;
 
     var files = this.mapping[type]['files'];
@@ -72,15 +78,14 @@ class Logger {
 
     if (this.logLevel > this.mapping[type]['level']) {
 
-      console.log( `[${ms}] ${prefix}${string}` );
+      console.log( `[${currentTime}] ${prefix}${string}` );
 
     };
 
-    while (files[0]) {
-      let file = this.fileObjects[files[0]];
-      await fs.appendFileSync(file, `\n${prefixRaw}${string}`, 'utf8');
-      files.shift(); // remove first from array
-    };
+    files.forEach( (item, index) => {
+      let file = this.fileObjects[ item ];
+      fs.appendFileSync(file, `\n[${currentTime}] ${prefixRaw}${string}`);
+    });
 
     if (this.counter[type]) {
       this.counter[type]++
