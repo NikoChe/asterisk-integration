@@ -167,10 +167,13 @@ class Server {
 
 
   async callStatistics( method, destination ) {
-    if ( destination.length != 3 || method != 'GET' ) {
-      return Server.error(400);
+    let regex = /^\d{4}-[0|1]\d-\d{2}_[0-2]\d:[0-6]\d:[0-6]\d$/;
 
-    } else {
+    if ( destination.length == 3 &&
+         method == 'GET' &&
+         regex.test( destination[1] ) &&
+         regex.test( destination[2] ) ) {
+
       let from = destination[1].replace(/_/g, ' ');
       let to = destination[2].replace(/_/g, ' ');
 
@@ -185,6 +188,9 @@ class Server {
       log.object(result['columns']);
 
       return [200, result];
+
+    } else {
+      return Server.error(400);
     };
   };
 
