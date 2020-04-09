@@ -104,7 +104,7 @@ async function error( response ) {
     errorBox.appendChild(newError);
     return true;
 
-  else {
+  } else {
    	return false;
   };
 }
