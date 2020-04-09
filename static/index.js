@@ -348,11 +348,8 @@ async function submitQuery() {
   fadeIn( loader );
 
   await requestData();
-
-  console.log(data)
-
   if ( !error(data) ) {
-  	console.log('im here')
+  	let hideQuery = true;
     let formatedData = await groupData();
 
     initPage( formatedData );
@@ -367,8 +364,11 @@ async function submitQuery() {
   let toWait = requestTime<200? 200-requestTime:0;
 
   await setTimeout(() => {
-    queryPage.style.zIndex = -20;
-    queryPage.style.opacity = 0;
+  	if ( hideQuery ) {
+      queryPage.style.zIndex = -20;
+      queryPage.style.opacity = 0;
+    };
+
     fadeOut(loader);
   }, toWait);
 }

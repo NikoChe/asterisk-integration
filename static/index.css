@@ -225,7 +225,7 @@ p {
 	overflow: hidden;
 	color: #f0f0f0;
 	font-family: "Rubik", sans;
-	animation: notify 7s linear 0s 1;
+	animation: notify 5s linear 0s 1;
 	animation-fill-mode: forwards;
 }
 
