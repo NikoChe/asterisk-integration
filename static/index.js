@@ -75,12 +75,38 @@ async function get( path ) {
 
       } else if (this.readyState == 4) {
         console.error(`Request error ${this.status}`);
+      	resolve( this.status );
       };
     };
 
     request.open('GET', url, true);
     request.send();
   });  
+}
+
+
+async function error( response ) {
+  if ( Number.isInteger(response) ) {
+    let errorMap = {
+      400 : 'Запрос не верный',
+      404 : 'Не найдено',
+      500 : 'Ошибка сервера'
+    };
+
+    let message = errorMap[response] || 'Неизвестная ошибка';
+    let errorBox = document.querySelector('.notifyField');
+    let newError = document.createElement('div');
+
+    newError.className = 'notify';
+    newError.innerHTML += `<i class="fas fa-exclamation"></i>
+                           <p>${ message }</p>`;
+
+    errorBox.appendChild(newError);
+    return true;
+
+  // else {
+  // 	return false;
+  };
 }
 
 
@@ -185,13 +211,13 @@ async function tableShowPage( num ) {
 	  let pagesContent = '';
     let tableContent = '';
 	  tableContent += "<tr class='tableNames'> \
-							          <td>Направление</td> \
-							          <td>Время</td> \
-							          <td>Номер</td> \
-							          <td>Статус</td> \
-							          <td>Длительность</td> \
-							          <td>Запись</td> \
-						            </tr>"
+							       <td>Направление</td> \
+							       <td>Время</td> \
+							       <td>Номер</td> \
+							       <td>Статус</td> \
+							       <td>Длительность</td> \
+							       <td>Запись</td> \
+						         </tr>"
 
 	  let page = pages[ num - 1 ];
 
@@ -251,15 +277,15 @@ async function tableShowPage( num ) {
 
 
 async function getRec( id ) {
-  console.log( id );
-
   let response = await get( `recordingFile/${id}` );
   let { path } = JSON.parse( response );
 
-  if ( path ) {
+  if ( error( path ) ) {
+    error('Запись не найдена');
+
+  } else if ( path ) {
     window.open( path, '_blank' );
-  } else {
-    console.error( 'No such recording' );
+
   };
 }
 
@@ -325,10 +351,16 @@ async function submitQuery() {
   fadeIn( loader );
 
   await requestData();
-  let formatedData = await groupData();
 
-  initPage( formatedData );
-  tableShowPage( 1 );
+  if ( error(data) ) {
+    error( 'Сервер не отвечает или запрос не верен' );
+
+  } else {
+    let formatedData = await groupData();
+
+    initPage( formatedData );
+    tableShowPage( 1 );
+  };
 
   let endTime = Date.now();
   let requestTime = endTime - startTime;
