@@ -118,10 +118,12 @@ class Server {
 
   // Needs refactoring
   async getRecordingFile( method, destination ) {
-    if ( destination.length != 2 || method != 'GET' ) {
-      return Server.error(400);
+    let validId = /^\d{10}\.\d{1,6}$/;
 
-    } else {
+    if ( destination.length == 2 &&
+         method == 'GET' &&
+         validId.test( destination[1] ) ) {
+
       let callId = destination[1];
       let ls = `ls ./rec | grep ${callId}`;
       var filename = null;
@@ -162,17 +164,19 @@ class Server {
         };
 
       };
-    };
+    } else {
+      return Server.error(400);
+    }
   };
 
 
   async callStatistics( method, destination ) {
-    let regex = /^\d{4}-[0|1]\d-\d{2}_[0-2]\d:[0-6]\d:[0-6]\d$/;
+    let validDate = /^\d{4}-[0|1]\d-\d{2}_[0-2]\d:[0-6]\d:[0-6]\d$/;
 
     if ( destination.length == 3 &&
          method == 'GET' &&
-         regex.test( destination[1] ) &&
-         regex.test( destination[2] ) ) {
+         validDate.test( destination[1] ) &&
+         validDate.test( destination[2] ) ) {
 
       let from = destination[1].replace(/_/g, ' ');
       let to = destination[2].replace(/_/g, ' ');
