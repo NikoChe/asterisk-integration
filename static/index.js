@@ -343,17 +343,19 @@ async function requestData() {
 
 
 async function submitQuery() {
+	let hideQuery = false;
   let startTime = Date.now();
 
   fadeIn( loader );
 
   await requestData();
   if ( !error(data) ) {
-  	let hideQuery = true;
     let formatedData = await groupData();
 
     initPage( formatedData );
     tableShowPage( 1 );
+
+  	hideQuery = true;
   };
 
   let endTime = Date.now();
