@@ -356,6 +356,7 @@ async function submitQuery() {
     error( 'Сервер не отвечает или запрос не верен' );
 
   } else {
+  	console.log('im here')
     let formatedData = await groupData();
 
     initPage( formatedData );
