@@ -104,8 +104,8 @@ async function error( response ) {
     errorBox.appendChild(newError);
     return true;
 
-  // else {
-  // 	return false;
+  else {
+   	return false;
   };
 }
 
@@ -351,6 +351,8 @@ async function submitQuery() {
   fadeIn( loader );
 
   await requestData();
+
+  console.log(data)
 
   if ( !error(data) ) {
   	console.log('im here')
