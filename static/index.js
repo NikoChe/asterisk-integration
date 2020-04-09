@@ -352,10 +352,7 @@ async function submitQuery() {
 
   await requestData();
 
-  if ( error(data) ) {
-    error( 'Сервер не отвечает или запрос не верен' );
-
-  } else {
+  if ( !error(data) ) {
   	console.log('im here')
     let formatedData = await groupData();
 
