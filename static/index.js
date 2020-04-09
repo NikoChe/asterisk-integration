@@ -280,10 +280,7 @@ async function getRec( id ) {
   let response = await get( `recordingFile/${id}` );
   let { path } = JSON.parse( response );
 
-  if ( error( path ) ) {
-    error('Запись не найдена');
-
-  } else if ( path ) {
+  if ( !error(response) ) {
     window.open( path, '_blank' );
 
   };
