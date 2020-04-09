@@ -85,7 +85,7 @@ async function get( path ) {
 }
 
 
-async function error( response ) {
+function error( response ) {
   if ( Number.isInteger(response) ) {
     let errorMap = {
       400 : 'Запрос не верный',
