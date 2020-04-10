@@ -11,11 +11,15 @@ var params, db;
 const ws = require('ws');
 const fs = require('fs');
 const http = require('http');
-const odbc = require('odbc');
 const util = require('util');
+const path = require('path');
 const exec = util.promisify( require('child_process').exec );
 
-const Logger = require('./class/logger.js');
+global.appRoot = path.resolve(__dirname);
+
+const Database = require('./class/odbc/odbc.js');
+const Auth = require('./class/auth/auth.js');
+const Logger = require('./class/logger/logger.js');
 const log = new Logger();
 
 
@@ -79,10 +83,10 @@ class Config {
   // FIXME!
   static check(config) {
   	let validConfig = {
-    server: {
+      server: {
         host: /^([0-255]\.[0-255]\.[0-255]\.[0-255])$/,
-        port: /^(\d\d\d?\d?\d?)$/,
-        knownIPs: ['127.0.0.1']
+        port: /^\d{1,5}$/,
+        knownIPs: /^([0-255]\.[0-255]\.[0-255]\.[0-255])$/,
     	},
 
       odbc: {
@@ -108,7 +112,7 @@ class Server {
     };
   };
 
-  static error( errorCode ) {
+  static error(errorCode) {
     return [ errorCode ];
   };
 
@@ -117,7 +121,7 @@ class Server {
   };
 
   // Needs refactoring
-  async getRecordingFile( method, destination ) {
+  async getRecordingFile(method, destination) {
     let validId = /^\d{10}\.\d{1,6}$/;
 
     if ( destination.length == 2 &&
@@ -170,7 +174,7 @@ class Server {
   };
 
 
-  async callStatistics( method, destination ) {
+  async callStatistics(method, destination) {
     let validDate = /^\d{4}-[0|1]\d-\d{2}_[0-2]\d:[0-6]\d:[0-6]\d$/;
 
     if ( destination.length == 3 &&
@@ -199,17 +203,17 @@ class Server {
   };
 
 
-  async aliveStatus( method, destination ) {
+  async aliveStatus(method, destination) {
     let data = {
       foo: 'bar',
       ping: 'pong',
       iam: 'Alive',
     };
 
-    if ( destination.length > 1 || method != 'GET' ) {
-      return [400];
-    } else {
+    if ( destination.length == 1 || method == 'GET' ) {
       return [200, data];
+    } else {
+      return Server.error(400);
     };
   };
 
@@ -218,6 +222,7 @@ class Server {
     log.debug('Received request:', '(Server)');
     log.debug(req.url);
     log.debug(req.method);
+    log.object(req);
 
     let method = req.method;
     let url = req.url;
@@ -254,160 +259,10 @@ class Server {
 
 };
 
-
-
-class Database {
-  constructor(odbcConfig) {
-    this.config = odbcConfig;
-    this.cdrName = this.config.aliases.cdr;
-    this.celName = this.config.aliases.cel;
-    this.cdrFields = 0;
-    this.db = 0;
-    this.dsn = 0;
-  };
-
-  async connect() {
-    log.info(`Connecting to database`);
-
-    let uname = this.config.username;
-    
-    let pass = this.config.password;
-    this.dsn = this.config.dsn;
-
-    log.debug(`dsn = ${this.dsn}`, '(odbc)');
-    log.debug(`username = ${uname}`, '(odbc)');
-    log.debug(`pass = ${ pass? 'yes':'no' }`, '(odbc)');
-
-    let connectionParams = {
-      connectionString: `DSN=${this.dsn};Uid=${uname};Pwd=${pass};`,
-      connectionTimeout: 15,
-      loginTimeout: 15,
-    };
-
-    try {
-      let result = await odbc.connect(connectionParams);
-      log.info(result? 'Success':'Failed');
-      this.db = result;
-      return true;
-
-    } catch(err) {
-    	// FIXME!
-      //  -add error codes from:
-      // docs.microsoft.com/en-us/sql/odbc/reference/develop-app/sqlstate-mappings
-      //  -put this logic in sqlerror function/class
-
-      let state = err.odbcErrors[0].state;
-      let causes = {
-        'HY000' : 'does db is running?',
-      };
-      let cause = causes[state]? causes[state]:'undefined';
-
-      log.error(`Can't connect to the database: ${cause}`, '(odbc)');
-    };
-  };
-
-  async execQuery(string) {
-    log.debug(`Executing query: '${string}'`, '(odbc)');
-
-    try {
-      let result = await this.db.query(string);
-      return result;
-
-    } catch(err) {
-      // Finding the cause of the error here
-      log.error(`Unable to execute query`, '(odbc)');
-    };
-  };
-
-  // FIXME!
-  async validate() {
-    let schema = await this.execQuery(`DESCRIBE ${this.cdrName}`);
-    let length = schema.count;
-    let result = {
-      recordingfile: false,
-      callerNumber: false, 
-    };
-
-    log.info(`Validating database with dsn: ${this.dsn}`, '(odbc)');
-
-    while (length) {
-      let i = length - 1;
-
-      if ( schema[i].Field == 'recordingfile' ) {
-        log.info(`Found recordingfile in cdr`, '(odbc)');
-        result.recordingfile = true;
-
-      } else if ( schema[i].Field == 'cnum' ) {
-        log.info(`Found callerNumber in cdr`, '(odbc)');
-        result.callerNumber = true;
-
-      };
-
-      length--;
-    };
-
-    this.cdrFields = result;
-    log.debug('Validation result:', '(odbc)');
-    log.object(result);
-  };
-
-  // async getTable(tableName) {
-  //   log.debug(`Geting table schema of ${tableName}`, '(odbc)');
-
-  //   try {
-  //     let result = await this.db.tables(null, null, tableName, null);
-  //     log.debug(result);
-  //     return result;
-
-  //   } catch(err) {
-  //     // Finding the cause of the error here
-  //     log.error(`Can't get table schema of ${tableName}:`, '(odbc)');
-  //     log.error(err);
-  //   };
-  // };
-};
-
-
-
-class Asterisk {
-  static addAccount(userid) {
-    // add dynamic account
-  };
-
-  static getAccount(userid) {
-    
-  };
-
-  static getCallStatistics(userid) {
-    
-  };
-
-  static getCallRecord(callid) {
-    
-  };
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 (async () => {
   params = Config.read();
+
   if (params){
-
-  //console.log(Config.check(params));
-
     db = new Database(params.odbc);
     if (await db.connect()) {
       await db.validate();
