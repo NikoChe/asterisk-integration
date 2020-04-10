@@ -1,22 +1,24 @@
 'use strict';
 
 const sqlite = require('sqlite3');
-const sha = require('./sha.js')
+const sha = require('./sha.js');
+const Logger = require(`${global.appRoot}/class/logger/logger.js`)
+const log = new Logger();
 
 class Auth {
-  constructor(db) {
-  
-  };
-
-  static check(request) {
+  constructor() {
 
   };
 
-  static authorize(request) {
+  check(request) {
+    console.log(request)
+  };
+
+  authorize(request) {
 
   };
 
-  static getActiveSessions(request) {
+  getActiveSessions(request) {
 
   };
 };
