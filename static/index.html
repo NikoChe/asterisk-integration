@@ -113,29 +113,32 @@
 		</div> -->
 
 		<div class='charts table'>
-			<div class='tableTitle'>
-				<div class='tableTitileBox'>
-					<div class='tableTitleContainer'>
-						<span>Информация и записи звонков</span>
+
+			<div class='htmlIsShit'>
+				<div class='tableTitle'>
+					<div class='tableTitileBox'>
+						<div class='tableTitleContainer'>
+							<span>Информация и записи звонков</span>
+						</div>
+						<div class='tableTitleContainer'>
+							<span id='pageInfo'>20 из 205</span>
+						</div>
 					</div>
-					<div class='tableTitleContainer'>
-						<span id='pageInfo'>20 из 205</span>
-					</div>
-				</div>
-				<div class='horizontal-line'></div>
-				<div class='tableTitileBox'>
-					<div class='tableTitleContainer'>
-						<input type="checkbox" name='in' id='in' checked>
-						<label for="in">Входящие</label>
-						<input type="checkbox" name='out' id='out' checked>
-						<label for="out">Исходящие</label>
-						<input type="checkbox" name='answer' id='answer' checked>
-						<label for="answer">Принятые</label>
-						<input type="checkbox" name='noanswer' id='noanswer' checked>
-						<label for="noanswer">Пропущенные</label>
-					</div>
-					<div class='tableTitleContainer'>
-						<button onclick='tableReloadPage()'>Обновить</button>
+					<div class='horizontal-line'></div>
+					<div class='tableTitileBox'>
+						<div class='tableTitleContainer'>
+							<input type="checkbox" name='in' id='in' checked>
+							<label for="in">Входящие</label>
+							<input type="checkbox" name='out' id='out' checked>
+							<label for="out">Исходящие</label>
+							<input type="checkbox" name='answer' id='answer' checked>
+							<label for="answer">Принятые</label>
+							<input type="checkbox" name='noanswer' id='noanswer' checked>
+							<label for="noanswer">Пропущенные</label>
+						</div>
+						<div class='tableTitleContainer'>
+							<button onclick='tableReloadPage()'>Обновить</button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -151,16 +154,6 @@
 				</div>
 				<table class='tableContent' id='table'>
 				</table>
-			</div>
-
-			<div class='pages'>
-				<div class='tableTitle tableTitileBox pagesDiv' id='pages'>
-					<a href="#" class='pagesContainer'>1</a>
-					<a href="#" class='pagesContainer'>2</a>
-					<a href="#" class='pagesContainer'>3</a>
-					<a href="#" class='pagesContainer'>4</a>
-					<a href="#" class='pagesContainer'>5</a>
-				</div>
 			</div>
 		</div>
 

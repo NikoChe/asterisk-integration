@@ -2,7 +2,8 @@
 
 
 
-var loader, tableLoader, queryPage, query, data;
+var loader, tableLoader, queryPage, query;
+var data = null;
 var currentPage;
 var pageSize = 10; // auto init in future
 var chartsWidth = 6;
@@ -86,11 +87,14 @@ async function get( path ) {
 
 
 function error( response ) {
-  if ( Number.isInteger(response) || data.length == 0 ) {
+  if ( Number.isInteger(response) || !data || data.length == 0 ) {
     let errorMap = {
       400 : 'Запрос не верный',
       404 : 'Не найдено',
-      500 : 'Ошибка сервера'
+      500 : 'Ошибка сервера',
+
+      'NO_INPUT'        :  'Введите запрос',
+      'INVALID_INPUT'   :  'Запрос введен не верно',
     };
 
     let message = errorMap[response] || 'Неизвестная ошибка';
@@ -323,7 +327,12 @@ async function initPage( values ) {
 }
 
 
-async function requestData() {
+async function submitQuery() {
+	let hideQuery = false;
+  let startTime = Date.now();
+
+  fadeIn( loader );
+
   query = [
     document.getElementById('from').value,
     document.getElementById('to').value,
@@ -338,24 +347,17 @@ async function requestData() {
     let rawJSON = await get( requestLink );
     data = JSON.parse( rawJSON );
     
-  };
-};
+	  if ( !error(data) ) {
+	    let formatedData = await groupData();
 
+	    initPage( formatedData );
+	    tableShowPage( 1 );
 
-async function submitQuery() {
-	let hideQuery = false;
-  let startTime = Date.now();
+	  	hideQuery = true;
+	  };
 
-  fadeIn( loader );
-
-  await requestData();
-  if ( !error(data) ) {
-    let formatedData = await groupData();
-
-    initPage( formatedData );
-    tableShowPage( 1 );
-
-  	hideQuery = true;
+  } else {
+  	error( 'NO_INPUT' );
   };
 
   let endTime = Date.now();
