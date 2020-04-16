@@ -10,6 +10,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "odbc": "^2.2.2",
+    "sqlite3": "^4.1.1",
     "ws": "^7.2.1"
   }
 }

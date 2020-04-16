@@ -10,33 +10,27 @@ class Database {
     this.cdrName = this.config.aliases.cdr;
     this.celName = this.config.aliases.cel;
     this.cdrFields = 0;
-    this.db = 0;
-    this.dsn = 0;
   };
 
   async connect() {
-    log.info(`Connecting to database`);
+    log.debug(`Connecting to database`);
 
     let uname = this.config.username;
-    
     let pass = this.config.password;
-    this.dsn = this.config.dsn;
+    let dsn = this.config.dsn;
 
-    log.debug(`dsn = ${this.dsn}`, '(odbc)');
+    log.debug(`dsn = ${dsn}`, '(odbc)');
     log.debug(`username = ${uname}`, '(odbc)');
     log.debug(`pass = ${ pass? 'yes':'no' }`, '(odbc)');
 
     let connectionParams = {
-      connectionString: `DSN=${this.dsn};Uid=${uname};Pwd=${pass};`,
+      connectionString: `DSN=${dsn};Uid=${uname};Pwd=${pass};`,
       connectionTimeout: 15,
       loginTimeout: 15,
     };
 
     try {
-      let result = await odbc.connect(connectionParams);
-      log.info(result? 'Success':'Failed');
-      this.db = result;
-      return true;
+      return await odbc.connect(connectionParams);
 
     } catch(err) {
     	// FIXME!
@@ -48,8 +42,8 @@ class Database {
       let causes = {
         'HY000' : 'does db is running?',
       };
-      let cause = causes[state]? causes[state]:'undefined';
 
+      let cause = causes[state]? causes[state]:'undefined';
       log.error(`Can't connect to the database: ${cause}`, '(odbc)');
     };
   };
@@ -58,7 +52,11 @@ class Database {
     log.debug(`Executing query: '${string}'`, '(odbc)');
 
     try {
-      let result = await this.db.query(string);
+      let db = await this.connect()
+      let result = await db.query(string);
+      
+      db.close();
+
       return result;
 
     } catch(err) {
@@ -70,13 +68,14 @@ class Database {
   // FIXME!
   async validate() {
     let schema = await this.execQuery(`DESCRIBE ${this.cdrName}`);
+
     let length = schema.count;
     let result = {
       recordingfile: false,
       callerNumber: false, 
     };
 
-    log.info(`Validating database with dsn: ${this.dsn}`, '(odbc)');
+    log.info(`Validating database with dsn: ${this.config.dsn}`, '(odbc)');
 
     while (length) {
       let i = length - 1;

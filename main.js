@@ -22,7 +22,6 @@ const Auth = require('./class/auth/auth.js');
 const Logger = require('./class/logger/logger.js');
 const log = new Logger();
 
-
 class Config {
   static read() {
   	var values;
@@ -49,6 +48,13 @@ class Config {
         },
       },
 
+      asterisk: {
+        odbc: {
+          dsn: 'node',
+          username: 'node',
+          password: '123',
+        },
+      }
     };
 
     try {
@@ -109,42 +115,108 @@ class Server {
       'callStatistics' : this.callStatistics,
       'aliveStatus'    : this.aliveStatus,
       'recordingFile'  : this.getRecordingFile,
+      'auth'           : this.authorize,
+      'register'       : this.register,
     };
   };
 
+
   static error(errorCode) {
-    return [ errorCode ];
+    return {
+      code    : errorCode,
+      headers : { 'Content-Type': 'text/plain' },
+      body    : '',
+    };
   };
 
-  parse( url ) {
+
+  static parse(url) {
     return url.split( /\// ).filter(Boolean);
   };
 
+
+  async register(request, body, auth) {
+    let destination = Server.parse(request.url);
+
+    if ( auth == 'UNTRUSTED' ) {
+      return Server.error(401);
+
+    } else if ( request.method == 'POST' &&
+         destination.length == 1 ) {
+      try {
+        await Auth.register(body.username, body.password);
+        return {
+          code    : 200,
+          headers : {'Content-Type': 'text/plain'},
+          body    : '',
+        };
+
+      } catch(err) {
+        log.debug(err);
+        return Server.error(500);
+      };
+
+    } else {
+      return Server.error(400)
+    };
+  };
+
+
+  async authorize(request, body, auth) {
+    let destination = Server.parse(request.url);
+
+    if ( request.method == 'POST' &&
+         destination.length == 1 ) {
+      try {
+        let token = await Auth.authorize(request, body.username, body.password);
+        
+        if (token) {
+          return {
+            code    : 200,
+            headers : {'Content-Type': 'text/plain'},
+            body    : JSON.stringify({
+              token : token,
+            }),
+          };
+
+        } else {
+          return Server.error(401);
+        };
+
+      } catch(err) {
+        log.debug(err);
+        return Server.error(500);
+      };
+
+    } else {
+      return Server.error(400)
+    };
+  };
+
+
   // Needs refactoring
-  async getRecordingFile(method, destination) {
+  async getRecordingFile(request, body, auth) {
     let validId = /^\d{10}\.\d{1,6}$/;
+    let destination = Server.parse(request.url);
 
     if ( destination.length == 2 &&
-         method == 'GET' &&
+         request.method == 'GET' &&
          validId.test( destination[1] ) ) {
 
       let callId = destination[1];
-      let ls = `ls ./rec | grep ${callId}`;
-      var filename = null;
 
-      // doesnt work now,
-      // TODO find file with fs
-      // exec( ls, ( err, stdout ) => {
-      //   filename = stdout;
-      // });
-
-      if ( filename ) {
-        return [200, { path: `recordings/${filename}` }];
+      if ( fs.existsSync(`./rec/${callId}.mp3`) ) {
+        return {
+            code     : 200,
+            headers  : {'Content-Type': 'application/json'},
+            body     : JSON.stringify({
+              path: `recordings/${callId}.mp3`
+            }),
+          };
 
       } else {
         let query = `SELECT recordingfile FROM cdr \
                      WHERE uniqueid="${callId}" LIMIT 1;`;
-
         let queryResult = await db.execQuery(query);
         let recordingfile = queryResult[0]['recordingfile'];
 
@@ -157,28 +229,29 @@ class Server {
 
         let recordsFolder = params.asterisk.recordsFolder;
         let pathToGsm = `${recordsFolder}/${recordingfile}.gsm`;
-        var pathToMp3 = `recordings/${callId}.mp3`;
 
-        await exec( `sox ${pathToGsm} ./rec/${callId}.mp3` );
-
-        if ( pathToMp3 ) {
-          return [200, { path: pathToMp3 }];
-        } else {
-          return Server.error(500);
+        await exec(`sox ${pathToGsm} ./rec/${callId}.mp3`);
+        return {
+          code     : 200,
+          headers  : {'Content-Type': 'application/json'},
+          body     : JSON.stringify({
+            path: `recordings/${callId}.mp3`,
+          }),
         };
-
       };
+
     } else {
       return Server.error(400);
-    }
+    };
   };
 
 
-  async callStatistics(method, destination) {
+  async callStatistics(request, body, auth) {
     let validDate = /^\d{4}-[0|1]\d-\d{2}_[0-2]\d:[0-6]\d:[0-6]\d$/;
+    let destination = this.parse(request.url);
 
     if ( destination.length == 3 &&
-         method == 'GET' &&
+         request.method == 'GET' &&
          validDate.test( destination[1] ) &&
          validDate.test( destination[2] ) ) {
 
@@ -195,7 +268,11 @@ class Server {
       let result = await db.execQuery(query);
       log.object(result['columns']);
 
-      return [200, result];
+      return {
+        code     : 200,
+        headers  : {'Content-Type': 'application/json'},
+        body     : JSON.stringify(result),
+      };
 
     } else {
       return Server.error(400);
@@ -203,73 +280,87 @@ class Server {
   };
 
 
-  async aliveStatus(method, destination) {
-    let data = {
-      foo: 'bar',
-      ping: 'pong',
-      iam: 'Alive',
-    };
+  async aliveStatus(request, body, auth) {
+    if ( Server.parse(request.url).length == 1 ||
+         method == 'GET' ) {
+      return {
+        code     : 200,
+        headers  : {'Content-Type': 'application/json'},
+        body     : JSON.stringify({
+          foo  : 'bar',
+          ping : 'pong',
+          iam  : 'Alive',
+        }),
+      };
 
-    if ( destination.length == 1 || method == 'GET' ) {
-      return [200, data];
     } else {
       return Server.error(400);
     };
   };
 
 
-  async handleRequest(req, res) {
+  async handleRequest(request, response) {
     log.debug('Received request:', '(Server)');
-    log.debug(req.url);
-    log.debug(req.method);
-    log.object(req);
+    log.debug(request.url);
+    log.debug(request.method);
 
-    let method = req.method;
-    let url = req.url;
-    let dest = this.parse(url);
+    let chunks = [];
+    let req = request;
+    let res = response;
 
-    try {
-      var response = await this.routing[ dest[0] ]( method, dest );
-      var data = response[1]? JSON.stringify( response[1] ):'';
-      var code = response[0];
+    req.on('data', chunk => chunks.push(chunk))
+       .on('end', async () => {
 
-    } catch(err) {
-      log.debug(err);
-      var data = '';
-      var code = 404;
+      let body = JSON.parse( Buffer.concat(chunks) );
+      let authStatus = await Auth.check(req, body.token);
 
-    }
+      if ( authStatus || /^\/auth\/?$/g.test(req.url) ) {
+        try {
+          var response = await this.routing[
+            Server.parse(req.url)[0]
+          ](req, body, authStatus);
 
-    // TODO Must be text/plain on errors
-    res.writeHead(code, { 'Content-Type': 'application/json' });
-    res.write(data);
-    res.end()
+        } catch(err) {
+          var response = Server.error(404);
+          log.debug(err)
+        };
 
-    log.debug(`Response: ${code}`, '(Server)');
+      } else {
+        var response = Server.error(401);
+      };
+
+      log.object(response);
+      log.debug(`Response: ${response.code}`, '(Server)');
+
+      res.writeHead(response.code, response.headers);
+      res.write(response.body);
+      res.end();
+    });
   };
 
 
   start() {
     log.info('Starting server at the '+ this.config.host +':'+ this.config.port);
+
     http.createServer((req,res) => {
       this.handleRequest(req, res);
+
     }).listen(this.config.port, this.config.host);
   };
 
-
 };
+
+
 
 (async () => {
   params = Config.read();
 
   if (params){
     db = new Database(params.odbc);
-    if (await db.connect()) {
-      await db.validate();
+    await db.validate();
 
-    };
-
-    // await db.getTable('cdr');
+  // create storage file for tokens and accounts
+  Auth.prepare();
 
   //  await db.execQuery(`DESCRIBE cdr`);
   let server = new Server(params.server);
